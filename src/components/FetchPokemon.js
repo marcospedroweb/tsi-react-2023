@@ -1,6 +1,6 @@
 import React from 'react';
-import Card from './Card';
 import styles from './FetchPokemon.module.css';
+import Pokedex from './Pokedex';
 
 const FetchPokemon = () => {
   const [pokemons, setPokemons] = React.useState([]);
@@ -15,42 +15,16 @@ const FetchPokemon = () => {
     fetchPokemons();
   }, []);
 
-  // fetchPokemons();
-
   if (!pokemons) return <h1>Carregando...</h1>;
   else if (pokemons && pokemons.results)
     return (
       <div className={styles.container}>
         <h1 className={styles.h1}>Quantidade de pokemons: {pokemons.count}</h1>
-        <div className={styles.divPokemons}>
-          {pokemons.results.map(({ name, url }, index) => {
-            return <Card url={url} key={name} />;
-          })}
-        </div>
-        <div>
-          {pokemons.previous != null ? (
-            <button
-              onClick={() => {
-                fetchPokemons(pokemons.previous);
-              }}
-            >
-              Voltar
-            </button>
-          ) : (
-            <button disabled>Voltar</button>
-          )}
-          {pokemons.next != null ? (
-            <button
-              onClick={() => {
-                fetchPokemons(pokemons.next);
-              }}
-            >
-              Proximo
-            </button>
-          ) : (
-            <button disabled>Proximo</button>
-          )}
-        </div>
+        <Pokedex
+          poke={pokemons.results}
+          urlPokemon={pokemons.results[0].url}
+          number={1}
+        />
       </div>
     );
 };

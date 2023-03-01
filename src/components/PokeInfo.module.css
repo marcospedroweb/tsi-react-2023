@@ -1,0 +1,72 @@
+.infoScreen {
+  display: block;
+  background-color: #323232;
+  width: 80%;
+  height: 150px;
+  margin: 48px auto 0 auto;
+  border-radius: 4px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+  padding: 16px;
+}
+
+.infoScreen.whiteBox {
+  background-color: #fff;
+  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+}
+
+.infoScreen h3,
+.infoScreen ul {
+  color: yellow;
+}
+
+.infoScreen.whiteBox h3,
+.infoScreen.whiteBox ul {
+  color: #323232;
+}
+
+
+.infoScreen h3 {
+  font-size: 1.5rem;
+}
+
+.infoScreen.bigText h3 {
+  font-size: 2rem;
+}
+
+.infoScreen ul {
+  margin: 0;
+  overflow: auto;
+  max-height: 80px;
+  font-size: .9rem;
+}
+
+.infoScreen.bigText ul {
+  font-size: 1.5rem;
+}
+
+.infoScreen ul li+li {
+  margin-top: 8px;
+}
+
+.infoScreen ul::-webkit-scrollbar {
+  width: 12px;
+  /* width of the entire scrollbar */
+}
+
+.infoScreen ul::-webkit-scrollbar-track {
+  background: #eee;
+  border-radius: 8px;
+  /* color of the tracking area */
+}
+
+.infoScreen ul::-webkit-scrollbar-thumb {
+  background-color: yellow;
+  /* color of the scroll thumb */
+  border-radius: 20px;
+  /* roundness of the scroll thumb */
+  border: 1px solid #eee;
+}
+
+.infoScreen.whiteBox ul::-webkit-scrollbar-thumb {
+  background-color: #323232;
+}
