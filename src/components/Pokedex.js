@@ -4,7 +4,7 @@ import styles from './Pokedex.module.css';
 import PokeImg from './PokeImg';
 import PokeInfo from './PokeInfo';
 
-const Pokedex = ({ poke, urlPokemon, number }) => {
+const Pokedex = ({ poke, urlPokemon, number, pokeCount }) => {
   const [pokemon, setPokemon] = React.useState('');
   const [num, setNum] = React.useState(number);
   const [screenBackground, setScreenBackground] = React.useState('');
@@ -12,7 +12,6 @@ const Pokedex = ({ poke, urlPokemon, number }) => {
   const [infoPoke, setInfoPoke] = React.useState('');
   const [imgPoke, setImgPoke] = React.useState('');
   const [textSize, setTextSize] = React.useState('');
-  const [playingMusic, setPlayingMusic] = React.useState(true);
 
   async function fetchPokemon(url, step) {
     if (url && step === 'next') {
@@ -21,6 +20,12 @@ const Pokedex = ({ poke, urlPokemon, number }) => {
     } else if (url && step === 'previous') {
       setNum(num - 1);
       url = url + (num - 1);
+    } else if (url && step === 'last') {
+      setNum(10271);
+      url = url + 10271;
+    } else if (url && step === 'first') {
+      setNum(1);
+      url = url + 1;
     }
 
     const promisse = await fetch(url || urlPokemon);
@@ -150,7 +155,9 @@ const Pokedex = ({ poke, urlPokemon, number }) => {
                   ></span>
                 </div>
                 <div
-                  className={styles.divArrow}
+                  className={`${styles.divArrow} ${
+                    num === 10271 ? styles.disabled : ''
+                  }`}
                   onClick={() => {
                     fetchPokemon(`https://pokeapi.co/api/v2/pokemon/`, 'next');
                   }}
@@ -325,8 +332,18 @@ const Pokedex = ({ poke, urlPokemon, number }) => {
             </div>
           </div>
           <div className={styles.divDecoration}>
-            <div className={styles.divBoxBlack}></div>
-            <div className={styles.divBoxBlack}></div>
+            <div
+              className={styles.divBoxBlack}
+              onClick={() => {
+                fetchPokemon(`https://pokeapi.co/api/v2/pokemon/`, 'first');
+              }}
+            ></div>
+            <div
+              className={styles.divBoxBlack}
+              onClick={() => {
+                fetchPokemon(`https://pokeapi.co/api/v2/pokemon/`, 'last');
+              }}
+            ></div>
           </div>
         </div>
       </div>

@@ -24,6 +24,7 @@ const FetchPokemon = () => {
           poke={pokemons.results}
           urlPokemon={pokemons.results[0].url}
           number={1}
+          pokeCount={pokemons.count}
         />
       </div>
     );
