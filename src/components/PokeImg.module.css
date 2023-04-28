@@ -1,0 +1,33 @@
+.screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  min-height: 337.14px;
+  max-height: 337.14px;
+  padding: 8px;
+  margin: 24px auto;
+  background-color: #323232;
+  border: 40px solid #eee;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+@media screen and (max-width:992px) {
+  .screen {
+    width: 90%;
+  }
+}
+
+
+.screen img {
+  width: 250px;
+  max-height: 250px;
+}
+
+@media screen and (max-width:992px) {
+  .screen img {
+    width: 90%;
+  }
+}

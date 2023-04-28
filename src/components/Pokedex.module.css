@@ -1,0 +1,297 @@
+.divPokedexOpened {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 64px;
+}
+
+@media screen and (max-width:992px) {
+  .divPokedexOpened {
+    flex-direction: column;
+    width: fit-content;
+    margin: 0 auto 64px auto;
+  }
+}
+
+.divPokedex {
+  background-color: #dc0a2d;
+  width: 500px;
+  height: fit-content;
+  border-radius: 16px;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+@media screen and (max-width:992px) {
+  .divPokedex {
+    width: 90vw;
+    margin: 0 auto;
+  }
+}
+
+.divBip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #ccc;
+}
+
+.bip {
+  display: block;
+  width: 50px;
+  height: 50px;
+  background-color: #4896c7;
+  border-radius: 50%;
+  animation: bip 1s infinite;
+  border: 3px solid #eee;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+@keyframes bip {
+  0% {
+    background-color: #4896c7;
+  }
+
+  50% {
+    background-color: #54a4d6;
+  }
+
+  80% {
+    background-color: #64b5e8;
+  }
+
+  100% {
+    background-color: #4896c7;
+  }
+}
+
+.divName {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: darkolivegreen;
+  height: 50px;
+  width: 50%;
+  border-radius: 10px;
+  margin: 0 8px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+.divName h2 {
+  color: yellow;
+  font-size: 1.15rem;
+}
+
+.divButtons {
+  border-top: 1px solid #ccc;
+  padding: 48px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btnMore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background-color: #121212;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-left: 16px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  cursor: pointer;
+  transition: all .2s ease-out;
+}
+
+.btnMore:hover {
+  background-color: #1f1f1f;
+}
+
+.btnMore:active {
+  box-shadow: none;
+}
+
+.divArrows {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+@media screen and (max-width:992px) {
+  .divArrows {
+    display: block;
+  }
+}
+
+
+.divArrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: burlywood;
+  padding: 12px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all .2s ease-out;
+}
+
+@media screen and (max-width:992px) {
+  .divArrow+.divArrow {
+    margin-top: 8px;
+  }
+}
+
+.divArrow.disabled {
+  background-color: #aaa !important;
+  cursor: not-allowed;
+}
+
+.divArrow:hover {
+  background-color: #c7a271;
+}
+
+.divArrow:active,
+.divBoxBlack:active {
+  box-shadow: none;
+}
+
+.arrow {
+  display: inline-block;
+  width: fit-content;
+  height: fit-content;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 30px solid #121212;
+}
+
+
+.arrowLeft {
+  transform: rotate(-90deg);
+}
+
+.arrowRight {
+  transform: rotate(90deg);
+}
+
+/* POKE INFO */
+
+.pokeInfo {
+  background-color: #dc0a2d;
+  width: 500px;
+  height: 550px;
+  border-radius: 16px;
+}
+
+@media screen and (max-width:992px) {
+  .pokeInfo {
+    width: 90vw;
+    margin: 0 auto;
+  }
+}
+
+.divFlexBtns {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: fit-content;
+  margin: 0 auto;
+}
+
+.divFlexBtns:nth-child(1) {
+  margin-top: 16px;
+}
+
+.infoBtn {
+  display: inline-block;
+  width: 50%;
+  height: 50px;
+  background-color: #2ca9fe;
+  border: 1px solid #323232;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  cursor: pointer;
+  transition: all .15s ease-in;
+}
+
+.infoBtn:hover {
+  background-color: #1a8ad6;
+}
+
+.infoBtn:active,
+.divBoxWhite:active {
+  box-shadow: none;
+}
+
+.divDecoration {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  margin: 32px auto 0 auto;
+}
+
+.divBoxWhite {
+  display: inline-block;
+  width: 80px;
+  height: 50px;
+  border: 1px solid #323232;
+  background-color: #eee;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  cursor: pointer;
+  transition: all .15s ease-in;
+}
+
+.divBoxWhite:hover {
+  background-color: #ddd;
+}
+
+.decorationSphere {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-color: #ffff00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  animation: bipYellow 5s ease-in infinite;
+}
+
+@keyframes bipYellow {
+  0% {
+    background-color: #ffff00;
+  }
+
+  25% {
+    background-color: #ebeb02;
+  }
+
+  50% {
+    background-color: #d9d900;
+  }
+
+  75% {
+    background-color: #c7c702;
+  }
+
+  100% {
+    background-color: #ffff00;
+  }
+}
+
+.divBoxBlack {
+  display: inline-block;
+  background-color: #323232;
+  width: 45%;
+  height: 50px;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  cursor: pointer;
+  transition: all .15s ease-in;
+}
+
+.divBoxBlack:hover {
+  background-color: #292929;
+}

@@ -1,0 +1,23 @@
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+
+
+.divPokemon {
+  background-color: bisque;
+  padding: 24px;
+}
+
+.divPokemon+.divPokemon {
+  margin-top: 32px;
+}
+
+.h1 {
+  text-align: center;
+}
+
+.h3 {
+  font-size: 1rem;
+}
