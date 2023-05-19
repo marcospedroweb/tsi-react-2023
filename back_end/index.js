@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri =
   'mongodb+srv://marcossenacsp:1324Senac@kartdb.emlgcmu.mongodb.net/?retryWrites=true&w=majority';
 const client = new MongoClient(uri, {
@@ -18,6 +18,119 @@ const db = client.db('KartDriver');
 
 app.get('/', (request, response) => {
   response.json({ mensagem: 'ola mundo!' });
+});
+
+// app.get('/categories', async (req, res) => {
+//   const categories = db.collection('categories');
+//   const documents = [
+//     {
+//       name: 'PMK',
+//     },
+//     {
+//       name: 'PCK',
+//     },
+//     {
+//       name: 'PJMK',
+//     },
+//     {
+//       name: 'PJK',
+//     },
+//     {
+//       name: 'PK',
+//     },
+//     {
+//       name: 'PGK B',
+//     },
+//     {
+//       name: 'PGK A',
+//     },
+//     {
+//       name: 'PSK B',
+//     },
+//     {
+//       name: 'PSK A',
+//     },
+//     {
+//       name: 'PSSK',
+//     },
+//     {
+//       name: 'PKI',
+//     },
+//   ];
+//   const result = await categories.insertMany(documents);
+//   if (result) {
+//     res.status(200).json({
+//       message: 'Piloto criado com sucesso!',
+//       driver: result,
+//     });
+//   } else {
+//     res.status(500).json({
+//       message: 'Houve algum erro',
+//       driver: result,
+//     });
+//   }
+// });
+
+app.get('/categories/:id', async (req, res) => {
+  const id = req.params.id;
+  const result = await db
+    .collection('categories')
+    .findOne({ _id: new ObjectId(id) });
+
+  if (result) {
+    res.status(200).json({
+      message: 'Categoria retornada com sucesso!',
+      driver: result,
+    });
+  } else {
+    res.status(500).json({
+      message: 'Houve algum erro',
+      driver: result,
+    });
+  }
+});
+
+app.delete('/categories/:id', async (req, res) => {
+  const id = req.params.id;
+  const category = await db
+    .collection('categories')
+    .findOne({ _id: new ObjectId(id) });
+  const result = await category.deleteOne(category);
+
+  if (result) {
+    res.status(200).json({
+      message: 'Categoria apagada com sucesso!',
+      driver: null,
+    });
+  } else {
+    res.status(500).json({
+      message: 'Houve algum erro',
+      driver: null,
+    });
+  }
+});
+
+app.put('/categories/:id', async (req, res) => {
+  const { name } = req.body;
+  const id = req.params.id;
+  const category = await db
+    .collection('categories')
+    .findOne({ _id: new ObjectId(id) });
+  const result = await category.updateOne(category, {
+    $set: { name },
+  });
+
+  if (result) {
+    res.status(200).json({
+      message: 'Categoria atualizada com sucesso!',
+      driver: result,
+    });
+  } else {
+    res.status(500).json({
+      message: 'Houve algum erro',
+      driver: null,
+    });
+  }
 });
 
 app.get('/drivers', async (req, res) => {
