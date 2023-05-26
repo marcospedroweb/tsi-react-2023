@@ -14,172 +14,284 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const app = express();
-const db = client.db('KartDriver');
+const db = client.db('Database');
+app.use(express.json());
+const msgCategories = {
+  getOne: 'Categoria retornada com sucesso',
+  getMany: 'Categorias retornada com sucesso',
+  delete: 'Categoria apagada com sucesso',
+  update: 'Categoria atualizada com sucesso',
+  create: 'Categoria criada com sucesso',
+  getOneError: 'Nenhuma categoria encontrada',
+  getManyError: 'Houve algum erro ao retornar os dados',
+  deleteError: 'Houve algum erro ao apagar o dado',
+  updateError: 'Houve algum erro ao atualizar o dado',
+  createError: 'Houve algum erro ao criar o dado',
+};
+const msgProduct = {
+  getOne: 'Produto retornada com sucesso',
+  getMany: 'Produtos retornada com sucesso',
+  delete: 'Produto apagada com sucesso',
+  update: 'Produto atualizada com sucesso',
+  create: 'Produto criada com sucesso',
+  getOneError: 'Nenhuma Produto encontrada',
+  getManyError: 'Houve algum erro ao retornar os dados',
+  deleteError: 'Houve algum erro ao apagar o dado',
+  updateError: 'Houve algum erro ao atualizar o dado',
+  createError: 'Houve algum erro ao criar o dado',
+};
 
 app.get('/', (request, response) => {
   response.json({ mensagem: 'ola mundo!' });
 });
 
-// app.get('/categories', async (req, res) => {
-//   const categories = db.collection('categories');
-//   const documents = [
-//     {
-//       name: 'PMK',
-//     },
-//     {
-//       name: 'PCK',
-//     },
-//     {
-//       name: 'PJMK',
-//     },
-//     {
-//       name: 'PJK',
-//     },
-//     {
-//       name: 'PK',
-//     },
-//     {
-//       name: 'PGK B',
-//     },
-//     {
-//       name: 'PGK A',
-//     },
-//     {
-//       name: 'PSK B',
-//     },
-//     {
-//       name: 'PSK A',
-//     },
-//     {
-//       name: 'PSSK',
-//     },
-//     {
-//       name: 'PKI',
-//     },
-//   ];
-//   const result = await categories.insertMany(documents);
-//   if (result) {
-//     res.status(200).json({
-//       message: 'Piloto criado com sucesso!',
-//       driver: result,
-//     });
-//   } else {
-//     res.status(500).json({
-//       message: 'Houve algum erro',
-//       driver: result,
-//     });
-//   }
-// });
+// Get many
+app.get('/categories', async (req, res) => {
+  const result = await db.collection('categories').find().toArray();
+  const categoriesArray = [];
+  for await (let category of result) {
+    categoriesArray.push(category);
+  }
+  if (categoriesArray) {
+    res.status(200).json({
+      message: msgCategories.getMany,
+      categories: categoriesArray,
+    });
+  } else {
+    res.status(500).json({
+      message: msgCategories.getOneError,
+      categories: null,
+    });
+  }
+});
 
+// Get one
 app.get('/categories/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const category = await db.collection('categories').findOne(query);
+
+  if (category) {
+    res.status(200).json({
+      message: msgCategories.getMany,
+      categories: category,
+    });
+  } else {
+    res.status(500).json({
+      message: msgCategories.getManyError,
+      categories: null,
+    });
+  }
+});
+
+// Delete
+app.delete('/categories/:id', async (req, res) => {
   const id = req.params.id;
   const result = await db
     .collection('categories')
-    .findOne({ _id: new ObjectId(id) });
+    .deleteOne({ _id: new ObjectId(id) });
 
   if (result) {
     res.status(200).json({
-      message: 'Categoria retornada com sucesso!',
-      driver: result,
+      message: msgCategories.delete,
+      categories: null,
     });
   } else {
     res.status(500).json({
-      message: 'Houve algum erro',
-      driver: result,
+      message: msgCategories.deleteError,
+      categories: null,
     });
   }
 });
 
-app.delete('/categories/:id', async (req, res) => {
-  const id = req.params.id;
-  const category = await db
-    .collection('categories')
-    .findOne({ _id: new ObjectId(id) });
-  const result = await category.deleteOne(category);
-
-  if (result) {
-    res.status(200).json({
-      message: 'Categoria apagada com sucesso!',
-      driver: null,
-    });
-  } else {
-    res.status(500).json({
-      message: 'Houve algum erro',
-      driver: null,
-    });
-  }
-});
-
+// Update
 app.put('/categories/:id', async (req, res) => {
-  const { name } = req.body;
+  const json = req.body;
   const id = req.params.id;
+
   const category = await db
     .collection('categories')
     .findOne({ _id: new ObjectId(id) });
-  const result = await category.updateOne(category, {
-    $set: { name },
-  });
+  if (!category) {
+    res.status(200).json({
+      message: msgCategories.updateError,
+      categories: null,
+    });
+    return;
+  }
+
+  const result = await db
+    .collection('categories')
+    .updateOne(category, { $set: { name: json.name } });
 
   if (result) {
     res.status(200).json({
-      message: 'Categoria atualizada com sucesso!',
-      driver: result,
+      message: msgCategories.update,
+      categories: result,
     });
   } else {
     res.status(500).json({
-      message: 'Houve algum erro',
-      driver: null,
+      message: msgCategories.updateError,
+      categories: null,
     });
   }
 });
 
-app.get('/drivers', async (req, res) => {
-  const drivers = await db.collection('drivers').find();
-  const driversArray = [];
-  for await (let driver of drivers) {
-    driversArray.push(driver);
+// Create
+app.post('/categories', async (req, res) => {
+  const { name } = req.body;
+  const categories = await db.collection('categories');
+  const category = { name };
+  const result = await categories.insertOne(category);
+
+  if (result) {
+    res.status(200).json({
+      message: msgCategories.create,
+      categories: result,
+    });
+  } else {
+    res.status(500).json({
+      message: msgCategories.createError,
+      categories: null,
+    });
   }
-  res.status(200).json({
-    message: 'Piloto retornado com sucesso!',
-    driver: driversArray,
-  });
 });
 
-app.post('/drivers', async (req, res) => {
+//getMany
+app.get('/products', async (req, res) => {
+  const products = await db.collection('products').find();
+  const productsArray = [];
+
+  for await (let product of products) {
+    const { name } = await db
+      .collection('categories')
+      .findOne({ _id: new ObjectId(product.category_id) });
+    product.category_name = name;
+    productsArray.push(product);
+  }
+
+  if (productsArray) {
+    res.status(200).json({
+      message: msgProduct.getMany,
+      products: productsArray,
+    });
+  } else {
+    res.status(500).json({
+      message: msgProduct.getManyError,
+      products: null,
+    });
+  }
+});
+
+//getOne
+app.get('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  const product = await db
+    .collection('products')
+    .findOne({ _id: new ObjectId(id) });
+
+  if (!product) {
+    res.status(200).json({
+      message: 'Produto não encontrado',
+      products: null,
+    });
+    return;
+  }
+
+  const { name } = await db
+    .collection('categories')
+    .findOne({ _id: new ObjectId(product.category_id) });
+  product.category_name = name;
+
+  if (product) {
+    res.status(200).json({
+      message: msgProduct.getMany,
+      products: product,
+    });
+  } else {
+    res.status(500).json({
+      message: msgProduct.getManyError,
+      products: null,
+    });
+  }
+});
+
+//Create
+app.post('/products', async (req, res) => {
   const { name, number, position, category_id } = req.body;
-  const drivers = await db.collection('drivers');
-  const driver = {
+  const products = await db.collection('products');
+  const product = {
     name,
     number,
     position,
-    category_id,
+    category_id: new ObjectId(category_id),
   };
-  const result = await drivers.insertOne(driver);
+  const result = await products.insertOne(product);
   if (result) {
     res.status(200).json({
-      message: 'Piloto criado com sucesso!',
-      driver: result,
+      message: msgProduct.create,
+      product: result,
     });
   } else {
     res.status(500).json({
-      message: 'Houve algum erro',
-      driver: result,
+      message: msgProduct.createError,
+      product: result,
     });
   }
 });
 
-async function insertDriver() {
-  const drivers = db.collection('drivers');
-  const driver = {
-    id: 1,
-    name: 'fulano',
-    number: 20,
-    position: 10,
-    category_id: 1,
-  };
-  const result = await drivers.insertOne(driver);
-  console.log(result);
-}
+//Update
+app.put('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  const { name, number, position, category_id } = req.body;
+
+  const product = await db
+    .collection('products')
+    .findOne({ _id: new ObjectId(id) });
+  if (!product) {
+    res.status(200).json({
+      message: msgProduct.updateError,
+      products: null,
+    });
+    return;
+  }
+
+  const result = await db.collection('products').updateOne(product, {
+    $set: { name, number, position, category_id: new ObjectId(category_id) },
+  });
+
+  if (result) {
+    res.status(200).json({
+      message: msgProduct.update,
+      product: result,
+    });
+  } else {
+    res.status(500).json({
+      message: msgProduct.updateError,
+      product: result,
+    });
+  }
+});
+
+//Delete
+app.delete('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  const result = await db
+    .collection('products')
+    .deleteOne({ _id: new ObjectId(id) });
+
+  if (result) {
+    res.status(200).json({
+      message: msgProduct.delete,
+      product: null,
+    });
+  } else {
+    res.status(500).json({
+      message: msgProduct.deleteError,
+      product: null,
+    });
+  }
+});
 
 app.listen(3002, () => {
   console.log('Servidor online na porta 3002');
