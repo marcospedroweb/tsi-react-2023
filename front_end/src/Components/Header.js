@@ -11,9 +11,9 @@ const Header = () => {
           data-bs-theme="dark"
           id={styles.nav}
         >
-          <h1 className="visually-hidden">App</h1>
+          <h1 className="visually-hidden">Tasks App</h1>
           <Link className="navbar-brand fw-bold" to="/">
-            App
+            Tasks App
           </Link>
           <button
             className="navbar-toggler"
@@ -30,16 +30,7 @@ const Header = () => {
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <Link className="nav-link" aria-current="page" to="/mostrar">
-                  Mostrar dados
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className="nav-link"
-                  aria-current="page"
-                  to="/mostrar-categorias"
-                >
-                  Mostrar Categorias
+                  Minhas tasks
                 </Link>
               </li>
             </ul>

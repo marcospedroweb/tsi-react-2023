@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const app = express();
-const db = client.db('Database');
+const db = client.db('TaskDatabase');
 app.use(express.json());
 app.use(cors());
 app.use(
@@ -23,25 +23,13 @@ app.use(
   }),
 );
 
-const msgCategories = {
-  getOne: 'Categoria retornada com sucesso',
-  getMany: 'Categorias retornada com sucesso',
-  delete: 'Categoria apagada com sucesso',
-  update: 'Categoria atualizada com sucesso',
-  create: 'Categoria criada com sucesso',
-  getOneError: 'Nenhuma categoria encontrada',
-  getManyError: 'Houve algum erro ao retornar os dados',
-  deleteError: 'Houve algum erro ao apagar o dado',
-  updateError: 'Houve algum erro ao atualizar o dado',
-  createError: 'Houve algum erro ao criar o dado',
-};
-const msgProduct = {
-  getOne: 'Produto retornada com sucesso',
-  getMany: 'Produtos retornada com sucesso',
-  delete: 'Produto apagada com sucesso',
-  update: 'Produto atualizada com sucesso',
-  create: 'Produto criada com sucesso',
-  getOneError: 'Nenhuma Produto encontrada',
+const msgTask = {
+  getOne: 'Tarefa retornada com sucesso',
+  getMany: 'Tarefas retornada com sucesso',
+  delete: 'Tarefa apagada com sucesso',
+  update: 'Tarefa atualizada com sucesso',
+  create: 'Tarefa criada com sucesso',
+  getOneError: 'Nenhuma Tarefa encontrada',
   getManyError: 'Houve algum erro ao retornar os dados',
   deleteError: 'Houve algum erro ao apagar o dado',
   updateError: 'Houve algum erro ao atualizar o dado',
@@ -53,252 +41,111 @@ app.get('/', (request, response) => {
 });
 
 // Get many
-app.get('/categories', async (req, res) => {
-  const result = await db.collection('categories').find().toArray();
-  const categoriesArray = [];
-  for await (let category of result) {
-    categoriesArray.push(category);
+app.get('/tasks', async (req, res) => {
+  const result = await db.collection('tasks').find().toArray();
+  const tasksArray = [];
+  for await (let task of result) {
+    tasksArray.push(task);
   }
-  if (categoriesArray) {
+  if (tasksArray) {
     res.status(200).json({
-      message: msgCategories.getMany,
-      categories: categoriesArray,
+      message: msgTask.getMany,
+      tasks: tasksArray,
     });
   } else {
     res.status(500).json({
-      message: msgCategories.getOneError,
-      categories: null,
+      message: msgTask.getOneError,
+      tasks: null,
     });
   }
 });
 
 // Get one
-app.get('/categories/:id', async (req, res) => {
+app.get('/tasks/:id', async (req, res) => {
   const id = req.params.id;
   const query = { _id: new ObjectId(id) };
-  const category = await db.collection('categories').findOne(query);
+  const task = await db.collection('tasks').findOne(query);
 
-  if (category) {
+  if (task) {
     res.status(200).json({
-      message: msgCategories.getMany,
-      categories: category,
+      message: msgTask.getMany,
+      tasks: task,
     });
   } else {
     res.status(500).json({
-      message: msgCategories.getManyError,
-      categories: null,
+      message: msgTask.getManyError,
+      tasks: null,
     });
   }
 });
 
 // Delete
-app.delete('/categories/:id', async (req, res) => {
+app.delete('/tasks/:id', async (req, res) => {
   const id = req.params.id;
   const result = await db
-    .collection('categories')
+    .collection('tasks')
     .deleteOne({ _id: new ObjectId(id) });
 
   if (result) {
     res.status(200).json({
-      message: msgCategories.delete,
-      categories: null,
+      message: msgTask.delete,
+      tasks: null,
     });
   } else {
     res.status(500).json({
-      message: msgCategories.deleteError,
-      categories: null,
+      message: msgTask.deleteError,
+      tasks: null,
     });
   }
 });
 
 // Update
-app.put('/categories/:id', async (req, res) => {
-  const json = req.body;
+app.put('/tasks/:id', async (req, res) => {
+  const { name, concluded } = req.body;
   const id = req.params.id;
 
-  const category = await db
-    .collection('categories')
-    .findOne({ _id: new ObjectId(id) });
-  if (!category) {
+  const task = await db.collection('tasks').findOne({ _id: new ObjectId(id) });
+  if (!task) {
     res.status(200).json({
-      message: msgCategories.updateError,
-      categories: null,
+      message: msgTask.updateError,
+      tasks: null,
     });
     return;
   }
 
   const result = await db
-    .collection('categories')
-    .updateOne(category, { $set: { name: json.name } });
+    .collection('tasks')
+    .updateOne(task, { $set: { name, concluded } });
 
   if (result) {
     res.status(200).json({
-      message: msgCategories.update,
-      categories: result,
+      message: msgTask.update,
+      tasks: result,
     });
   } else {
     res.status(500).json({
-      message: msgCategories.updateError,
-      categories: null,
+      message: msgTask.updateError,
+      tasks: null,
     });
   }
 });
 
 // Create
-app.post('/categories', async (req, res) => {
+app.post('/tasks', async (req, res) => {
   const { name } = req.body;
-  const categories = await db.collection('categories');
-  const category = { name };
-  const result = await categories.insertOne(category);
+  const tasks = await db.collection('tasks');
+  const task = { name, concluded: false };
+  const result = await tasks.insertOne(task);
 
   if (result) {
     res.status(200).json({
-      message: msgCategories.create,
-      categories: result,
+      message: msgTask.create,
+      tasks: result,
     });
   } else {
     res.status(500).json({
-      message: msgCategories.createError,
-      categories: null,
-    });
-  }
-});
-
-//getMany
-app.get('/products', async (req, res) => {
-  const products = await db.collection('products').find();
-  const productsArray = [];
-
-  for await (let product of products) {
-    const category = await db
-      .collection('categories')
-      .findOne({ _id: new ObjectId(product.category_id) });
-    if (!category) {
-      product.category_name = null;
-      productsArray.push(product);
-    }
-    product.category_name = category.name;
-    productsArray.push(product);
-  }
-
-  if (productsArray) {
-    res.status(200).json({
-      message: msgProduct.getMany,
-      products: productsArray,
-    });
-  } else {
-    res.status(500).json({
-      message: msgProduct.getManyError,
-      products: null,
-    });
-  }
-});
-
-//getOne
-app.get('/products/:id', async (req, res) => {
-  const id = req.params.id;
-  const product = await db
-    .collection('products')
-    .findOne({ _id: new ObjectId(id) });
-
-  if (!product) {
-    res.status(200).json({
-      message: 'Produto não encontrado',
-      products: null,
-    });
-    return;
-  }
-
-  const { name } = await db
-    .collection('categories')
-    .findOne({ _id: new ObjectId(product.category_id) });
-  product.category_name = name;
-
-  if (product) {
-    res.status(200).json({
-      message: msgProduct.getMany,
-      products: product,
-    });
-  } else {
-    res.status(500).json({
-      message: msgProduct.getManyError,
-      products: null,
-    });
-  }
-});
-
-//Create
-app.post('/products', async (req, res) => {
-  const { name, category_id } = req.body;
-  const products = await db.collection('products');
-  const product = {
-    name,
-    category_id: new ObjectId(category_id),
-  };
-
-  const result = await products.insertOne(product);
-  if (result) {
-    res.status(200).json({
-      message: msgProduct.create,
-      product: result,
-    });
-  } else {
-    res.status(500).json({
-      message: msgProduct.createError,
-      product: result,
-    });
-  }
-});
-
-//Update
-app.put('/products/:id', async (req, res) => {
-  const id = req.params.id;
-  const { name, number, position, category_id } = req.body;
-
-  const product = await db
-    .collection('products')
-    .findOne({ _id: new ObjectId(id) });
-  if (!product) {
-    res.status(200).json({
-      message: msgProduct.updateError,
-      products: null,
-    });
-    return;
-  }
-
-  const result = await db.collection('products').updateOne(product, {
-    $set: { name, number, position, category_id: new ObjectId(category_id) },
-  });
-
-  if (result) {
-    res.status(200).json({
-      message: msgProduct.update,
-      product: result,
-    });
-  } else {
-    res.status(500).json({
-      message: msgProduct.updateError,
-      product: result,
-    });
-  }
-});
-
-//Delete
-app.delete('/products/:id', async (req, res) => {
-  const id = req.params.id;
-  const result = await db
-    .collection('products')
-    .deleteOne({ _id: new ObjectId(id) });
-
-  if (result) {
-    res.status(200).json({
-      message: msgProduct.delete,
-      product: null,
-    });
-  } else {
-    res.status(500).json({
-      message: msgProduct.deleteError,
-      product: null,
+      message: msgTask.createError,
+      tasks: null,
     });
   }
 });
