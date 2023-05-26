@@ -16,6 +16,13 @@ const cors = require('cors');
 const app = express();
 const db = client.db('Database');
 app.use(express.json());
+app.use(cors());
+app.use(
+  cors({
+    origin: /https?:\/\/(www\.)?seu-site\.com/,
+  }),
+);
+
 const msgCategories = {
   getOne: 'Categoria retornada com sucesso',
   getMany: 'Categorias retornada com sucesso',
@@ -163,10 +170,14 @@ app.get('/products', async (req, res) => {
   const productsArray = [];
 
   for await (let product of products) {
-    const { name } = await db
+    const category = await db
       .collection('categories')
       .findOne({ _id: new ObjectId(product.category_id) });
-    product.category_name = name;
+    if (!category) {
+      product.category_name = null;
+      productsArray.push(product);
+    }
+    product.category_name = category.name;
     productsArray.push(product);
   }
 
@@ -218,14 +229,13 @@ app.get('/products/:id', async (req, res) => {
 
 //Create
 app.post('/products', async (req, res) => {
-  const { name, number, position, category_id } = req.body;
+  const { name, category_id } = req.body;
   const products = await db.collection('products');
   const product = {
     name,
-    number,
-    position,
     category_id: new ObjectId(category_id),
   };
+
   const result = await products.insertOne(product);
   if (result) {
     res.status(200).json({
